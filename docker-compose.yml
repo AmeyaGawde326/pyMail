@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  email-server:
+    build: .
+    container_name: python-email-server
+    ports:
+      - "5000:5000"
+    environment:
+      # SMTP Configuration
+      - MAIL_SERVER=smtp.gmail.com
+      - MAIL_PORT=587
+      - MAIL_USE_TLS=True
+      - MAIL_USE_SSL=False
+      - MAIL_USERNAME=${MAIL_USERNAME}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+      - MAIL_DEFAULT_SENDER=${MAIL_DEFAULT_SENDER}
+      
+      # Flask Configuration
+      - FLASK_ENV=production
+      
+      # API Security
+      - API_KEY=${API_KEY}
+    env_file:
+      - .env
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - email-network
+
+networks:
+  email-network:
+    driver: bridge

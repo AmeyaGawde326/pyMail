@@ -1,0 +1,15 @@
+# Google SMTP Configuration
+MAIL_SERVER=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USE_TLS=True
+MAIL_USE_SSL=False
+MAIL_USERNAME=your-email@gmail.com
+MAIL_PASSWORD=your-app-password
+MAIL_DEFAULT_SENDER=your-email@gmail.com
+
+# Flask Configuration
+FLASK_ENV=development
+FLASK_DEBUG=True
+
+# API Security
+API_KEY=your-api-key-here
