@@ -42,7 +42,7 @@ def main():
         sys.exit(1)
     
     try:
-        from app import app
+        from app.app import app
         print("✅ Flask application loaded successfully")
         print("✅ Email templates loaded successfully")
         print("✅ SMTP configuration ready")

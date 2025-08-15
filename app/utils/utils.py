@@ -1,5 +1,5 @@
 from flask import jsonify
-from templates import TEMPLATE_MAP, TEMPLATE_VARIABLES, VALID_EMAIL_TYPES, is_valid_email_type
+from ..templates.templates import TEMPLATE_MAP, TEMPLATE_VARIABLES, VALID_EMAIL_TYPES, is_valid_email_type
 
 def validate_email_request(data):
     """Validate email request data and return errors if any"""

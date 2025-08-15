@@ -1,6 +1,6 @@
 from flask_mail import Message
-from templates import TEMPLATE_MAP, get_template_by_type, is_valid_email_type
-from utils import render_template, create_success_response, create_error_response
+from ..templates.templates import TEMPLATE_MAP, get_template_by_type, is_valid_email_type
+from ..utils.utils import render_template, create_success_response, create_error_response
 
 class EmailService:
     def __init__(self, mail):

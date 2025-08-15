@@ -3,10 +3,10 @@ from flask_mail import Mail
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from functools import wraps
-from config import Config
-from templates import VALID_EMAIL_TYPES, get_template_description
-from utils import validate_email_request, validate_api_key, create_error_response
-from email_service import EmailService
+from config.config import Config
+from .templates.templates import VALID_EMAIL_TYPES, get_template_description
+from .utils.utils import validate_email_request, validate_api_key, create_error_response
+from .services.email_service import EmailService
 
 app = Flask(__name__)
 app.config.from_object(Config)
