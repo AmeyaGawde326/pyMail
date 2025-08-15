@@ -20,7 +20,7 @@ cp env_example.txt .env
 
 # Edit the .env file with your values
 # MAIL_USERNAME=your-email@gmail.com
-# MAIL_PASSWORD=your-app-password
+# MAIL_PASSWORD=base64-encoded-app-password
 # MAIL_DEFAULT_SENDER=your-email@gmail.com
 # API_KEY=your-api-key-here
 ```
@@ -243,11 +243,31 @@ The following environment variables can be set in your `.env` file or passed dir
 ```bash
 # SMTP Configuration
 MAIL_USERNAME=your-email@gmail.com
-MAIL_PASSWORD=your-app-password
+MAIL_PASSWORD=base64-encoded-app-password
 MAIL_DEFAULT_SENDER=your-email@gmail.com
 
 # Security
 API_KEY=your-api-key-here
+```
+
+**Note:** The MAIL_PASSWORD must be base64 encoded for security. To encode your password:
+
+**Linux/macOS:**
+```bash
+echo -n "your-actual-app-password" | base64
+```
+
+**Windows (PowerShell):**
+```powershell
+[Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes("your-actual-app-password"))
+```
+
+**Python:**
+```python
+import base64
+password = "your-actual-app-password"
+encoded = base64.b64encode(password.encode('utf-8')).decode('utf-8')
+print(encoded)
 ```
 
 ### Optional Variables

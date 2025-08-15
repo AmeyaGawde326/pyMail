@@ -50,3 +50,4 @@ start_server.bat
 
 # Development files
 run.py
+encode_password.py

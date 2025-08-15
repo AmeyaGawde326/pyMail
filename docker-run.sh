@@ -45,7 +45,7 @@ check_env_file() {
         print_status "Please create a .env file with the following variables:"
         echo ""
         echo "MAIL_USERNAME=your-email@gmail.com"
-        echo "MAIL_PASSWORD=your-app-password"
+        echo "MAIL_PASSWORD=base64-encoded-app-password"
         echo "MAIL_DEFAULT_SENDER=your-email@gmail.com"
         echo "API_KEY=your-api-key-here"
         echo ""

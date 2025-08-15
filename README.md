@@ -48,7 +48,7 @@ MAIL_PORT=587
 MAIL_USE_TLS=True
 MAIL_USE_SSL=False
 MAIL_USERNAME=your-email@gmail.com
-MAIL_PASSWORD=your-app-password
+MAIL_PASSWORD=base64-encoded-app-password
 MAIL_DEFAULT_SENDER=your-email@gmail.com
 
 # Flask Configuration
@@ -62,7 +62,32 @@ API_KEY=your-api-key-here
 **Important:** 
 - For Gmail, you need to use an App Password, not your regular password
 - Enable 2-factor authentication and generate an App Password in your Google Account settings
+- The MAIL_PASSWORD must be base64 encoded (see instructions below)
 - The API_KEY is required for all protected endpoints
+
+### Password Encoding
+
+The MAIL_PASSWORD must be base64 encoded for security. To encode your password:
+
+**Linux/macOS:**
+```bash
+echo -n "your-actual-app-password" | base64
+```
+
+**Windows (PowerShell):**
+```powershell
+[Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes("your-actual-app-password"))
+```
+
+**Python:**
+```python
+import base64
+password = "your-actual-app-password"
+encoded = base64.b64encode(password.encode('utf-8')).decode('utf-8')
+print(encoded)
+```
+
+Copy the encoded output and use it as your MAIL_PASSWORD value.
 
 ### 3. Run the Server
 

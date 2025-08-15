@@ -4,9 +4,14 @@ import os
 from datetime import datetime, timedelta
 
 BASE_URL = "http://localhost:5000"
+user_email = "kaistack00@gmail.com"
 
-# Load API key from environment or use default for testing
-API_KEY = os.getenv('API_KEY', 'test-api-key')
+# Load API key from environment
+API_KEY = os.getenv('API_KEY','isekai-trash')
+if not API_KEY:
+    print("API_KEY not found in environment variables")
+    exit(1)
+
 HEADERS = {"Content-Type": "application/json", "X-API-Key": API_KEY}
 
 def test_health_check():
@@ -44,11 +49,11 @@ def test_send_welcome_email():
     """Test sending a welcome email"""
     print("Testing send welcome email...")
     data = {
-        "receiver_email": "test@example.com",
+        "receiver_email": user_email,
         "email_type": "welcome_email",
         "variables": {
             "name": "Test User",
-            "email": "test@example.com",
+            "email": user_email,
             "login_url": "https://example.com/login"
         }
     }
@@ -70,7 +75,7 @@ def test_send_account_confirmation():
     """Test sending an account confirmation email"""
     print("Testing send account confirmation email...")
     data = {
-        "receiver_email": "test@example.com",
+        "receiver_email": user_email,
         "email_type": "account_confirmation_email",
         "variables": {
             "name": "Test User",
@@ -96,7 +101,7 @@ def test_send_password_reset():
     """Test sending a password reset email"""
     print("Testing send password reset email...")
     data = {
-        "receiver_email": "test@example.com",
+        "receiver_email": user_email,
         "email_type": "password_reset_email",
         "variables": {
             "name": "Test User",
@@ -126,7 +131,7 @@ def test_send_access_key():
     expiry_date = now + timedelta(hours=72)
     
     data = {
-        "receiver_email": "test@example.com",
+        "receiver_email": user_email,
         "email_type": "access_key_email",
         "variables": {
             "name": "Test User",
@@ -155,11 +160,11 @@ def test_send_invoice():
     """Test sending an invoice email"""
     print("Testing send invoice email...")
     data = {
-        "receiver_email": "customer@example.com",
+        "receiver_email": user_email,
         "email_type": "invoice_email",
         "variables": {
             "customer_name": "John Doe",
-            "customer_email": "customer@example.com",
+            "customer_email": user_email,
             "invoice_number": "INV-2024-001",
             "invoice_date": "2024-01-15",
             "due_date": "2024-02-15",
@@ -188,7 +193,7 @@ def test_invalid_email_type():
     """Test sending email with invalid email type"""
     print("Testing invalid email type...")
     data = {
-        "receiver_email": "test@example.com",
+                "receiver_email": user_email,
         "email_type": "invalid_email_type",
         "variables": {
             "name": "Test User"

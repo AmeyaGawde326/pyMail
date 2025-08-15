@@ -1,4 +1,5 @@
 import os
+import base64
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -10,7 +11,16 @@ class Config:
     MAIL_USE_TLS = True
     MAIL_USE_SSL = False
     MAIL_USERNAME = os.getenv('MAIL_USERNAME')
-    MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
+    
+    # Decode base64 encoded mail password
+    mail_password_encoded = os.getenv('MAIL_PASSWORD')
+    MAIL_PASSWORD = None
+    if mail_password_encoded:
+        try:
+            MAIL_PASSWORD = base64.b64decode(mail_password_encoded).decode('utf-8')
+        except Exception as e:
+            print(f"Warning: Failed to decode MAIL_PASSWORD from base64: {e}")
+    
     MAIL_DEFAULT_SENDER = os.getenv('MAIL_DEFAULT_SENDER')
 
     
