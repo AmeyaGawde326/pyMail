@@ -45,8 +45,7 @@ logs/
 *.tmp
 *.temp
 
-# Windows
-start_server.bat
+
 
 # Development files
 run.py

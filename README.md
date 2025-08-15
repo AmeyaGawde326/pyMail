@@ -1,6 +1,6 @@
-# Python Email Server - Single Endpoint Version
+# Python Email Server
 
-A Flask-based web server that provides email sending functionality using Google SMTP with customizable email templates, modular architecture, and API key protection. Uses a single endpoint with email type validation for all email operations.
+A Flask-based web server that provides email sending functionality using Google SMTP with customizable email templates, modular architecture, and API key protection.
 
 ## Features
 
@@ -24,358 +24,91 @@ python-mail-server/
 ├── email_service.py    # Email service business logic
 ├── requirements.txt    # Python dependencies
 ├── test_email.py       # Comprehensive testing script
+├── test_email_short.py # Quick testing script
 ├── run.py              # Enhanced startup script
-├── start_server.bat    # Windows startup script
+├── GMAIL_DOMAIN_EMAIL_SETUP.md # Complete domain email setup guide
+├── API_DOCUMENTATION.md # API endpoints and usage
+├── CUSTOM_TEMPLATES.md # How to add custom email templates
+├── ENVIRONMENT_SETUP.md # Detailed environment configuration guide
 └── README.md           # This file
 ```
 
-## Setup
+## Quick Start
 
 ### 1. Install Dependencies
-
 ```bash
 pip install -r requirements.txt
 ```
 
 ### 2. Environment Configuration
-
-Create a `.env` file in the root directory with the following variables:
+Create a `.env` file in the root directory:
 
 ```env
-# Google SMTP Configuration
-MAIL_SERVER=smtp.gmail.com
-MAIL_PORT=587
-MAIL_USE_TLS=True
-MAIL_USE_SSL=False
-MAIL_USERNAME=your-email@gmail.com
+MAIL_USERNAME=your-gmail-account@gmail.com
 MAIL_PASSWORD=base64-encoded-app-password
-# Note: Sender information is now passed in the request (sender_name and sender_email)
-
-# Flask Configuration
-FLASK_ENV=development
-FLASK_DEBUG=True
-
-# API Security
 API_KEY=your-api-key-here
 ```
 
-**Important:** 
+**Important Notes:**
 - For Gmail, you need to use an App Password, not your regular password
 - Enable 2-factor authentication and generate an App Password in your Google Account settings
-- The MAIL_PASSWORD must be base64 encoded (see instructions below)
+- The MAIL_PASSWORD must be base64 encoded
 - The API_KEY is required for all protected endpoints
+- **Domain Email Setup**: If you want to send emails from a custom domain (e.g., contact@yourdomain.com), you still need to use your Gmail account as MAIL_USERNAME. The domain email will be used as sender_email in your API requests. See `GMAIL_DOMAIN_EMAIL_SETUP.md` for a complete step-by-step guide using Cloudflare Email Routing.
 
-### Password Encoding
+### 2.1 Setting Up Your .env File
 
-The MAIL_PASSWORD must be base64 encoded for security. To encode your password:
+1. **Create a `.env` file** in your project root directory
+2. **Encode your app password** using base64 encoding
+3. **Fill in your `.env` file** with your Gmail account, encoded password, and API key
 
-**Linux/macOS:**
-```bash
-echo -n "your-actual-app-password" | base64
+**Basic .env structure:**
+```env
+MAIL_USERNAME=yourname@gmail.com
+MAIL_PASSWORD=base64-encoded-app-password
+API_KEY=your-secure-api-key // This is a random string of password that you can use to authenticate req
 ```
 
-**Windows (PowerShell):**
-```powershell
-[Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes("your-actual-app-password"))
-```
+**Important:** Use your Gmail account (not domain email) as `MAIL_USERNAME`.
 
-**Python:**
-```python
-import base64
-password = "your-actual-app-password"
-encoded = base64.b64encode(password.encode('utf-8')).decode('utf-8')
-print(encoded)
-```
-
-Copy the encoded output and use it as your MAIL_PASSWORD value.
+For detailed setup instructions and troubleshooting, see **[Environment Setup Guide](ENVIRONMENT_SETUP.md)**.
 
 ### 3. Run the Server
-
 ```bash
 python run.py
 ```
 
-Or on Windows:
-```bash
-start_server.bat
-```
-
 The server will start on `http://localhost:5000`
 
-## API Endpoints
+### 4. Domain Email Setup (Optional)
+If you want to send emails from a custom domain address (e.g., `contact@yourdomain.com`):
 
-### Public Endpoints
+1. **Follow the complete guide**: `GMAIL_DOMAIN_EMAIL_SETUP.md`
+2. **Use Cloudflare Email Routing** for easy domain email setup
+3. **Configure Gmail** to send emails from your domain
+4. **Run Docker componse with** `docker compose up -d` 
+5. **Test with**: `python test_email_short.py`
+6. **For all endpoints and complete test with**: `python test_email.py`
 
-#### Health Check
-**GET** `/health`
-- No authentication required
-- Check if the service is running
-- Returns email types count
+**Key Point**: You still use your Gmail account credentials in the `.env` file, but specify your domain email as `sender_email` in API requests.
 
-### Protected Endpoints (Require API Key)
+## Documentation
 
-All protected endpoints require the `X-API-Key` header with your API key.
-
-#### Send Email
-**POST** `/send-email`
-- Single endpoint for all email types
-- Send any type of email using email_type parameter
-
-#### Get Email Types
-**GET** `/email-types`
-- Get list of available email types with descriptions
-
-## Email Types
-
-### 1. Welcome Email (`welcome_email`)
-- **Required Variables:** `name`, `email`, `login_url`
-- **Use Case:** New user registration
-
-### 2. Account Confirmation Email (`account_confirmation_email`)
-- **Required Variables:** `name`, `verification_url`, `expiry_hours`
-- **Use Case:** Email verification for new accounts
-
-### 3. Password Reset Email (`password_reset_email`)
-- **Required Variables:** `name`, `reset_link`, `expiry_hours`
-- **Use Case:** Password reset requests
-
-### 4. Access Key Email (`access_key_email`)
-- **Required Variables:** `name`, `service_name`, `access_key`, `generated_date`, `expiry_date`, `expiry_hours`
-- **Use Case:** API access key generation
-
-### 5. Invoice Email (`invoice_email`)
-- **Required Variables:** `customer_name`, `customer_email`, `invoice_number`, `invoice_date`, `due_date`, `total_amount`, `company_name`, `payment_link`, `payment_terms`, `notes`
-- **Use Case:** Business invoice emails
-
-## Usage Examples
-
-### Send Welcome Email
-```bash
-curl -X POST http://localhost:5000/send-email \
-  -H "Content-Type: application/json" \
-  -H "X-API-Key: your-api-key" \
-  -d '{
-    "receiver_email": "user@example.com",
-    "email_type": "welcome_email",
-    "sender_name": "Example App",
-    "sender_email": "noreply@example.com",
-    "variables": {
-        "name": "Alice Smith",
-        "email": "alice@example.com",
-        "login_url": "https://example.com/login"
-    }
-  }'
-```
-
-### Send Account Confirmation
-```bash
-curl -X POST http://localhost:5000/send-email \
-  -H "Content-Type: application/json" \
-  -H "X-API-Key: your-api-key" \
-  -d '{
-    "receiver_email": "user@example.com",
-    "email_type": "account_confirmation_email",
-    "sender_name": "Example App",
-    "sender_email": "noreply@example.com",
-    "variables": {
-        "name": "Bob Johnson",
-        "verification_url": "https://example.com/verify?token=abc123",
-        "expiry_hours": 1
-    }
-  }'
-```
-
-### Send Password Reset
-```bash
-curl -X POST http://localhost:5000/send-email \
-  -H "Content-Type: application/json" \
-  -H "X-API-Key: your-api-key" \
-  -d '{
-    "receiver_email": "user@example.com",
-    "email_type": "password_reset_email",
-    "sender_name": "Example App",
-    "sender_email": "noreply@example.com",
-    "variables": {
-        "name": "Carol Davis",
-        "reset_link": "https://example.com/reset?token=xyz789",
-        "expiry_hours": 24
-    }
-  }'
-```
-
-### Send Access Key
-```bash
-curl -X POST http://localhost:5000/send-email \
-  -H "Content-Type: application/json" \
-  -H "X-API-Key: your-api-key" \
-  -d '{
-    "receiver_email": "user@example.com",
-    "email_type": "access_key_email",
-    "sender_name": "Example App",
-    "sender_email": "noreply@example.com",
-    "variables": {
-        "name": "David Wilson",
-        "service_name": "API Service",
-        "access_key": "ak_1234567890abcdef",
-        "generated_date": "2024-01-15 10:30:00",
-        "expiry_date": "2024-01-18 10:30:00",
-        "expiry_hours": 72
-    }
-  }'
-```
-
-### Send Invoice
-```bash
-curl -X POST http://localhost:5000/send-email \
-  -H "Content-Type: application/json" \
-  -H "X-API-Key: your-api-key" \
-  -d '{
-    "receiver_email": "customer@example.com",
-    "email_type": "invoice_email",
-    "sender_name": "Example Corp",
-    "sender_email": "billing@example.com",
-    "variables": {
-        "customer_name": "John Doe",
-        "customer_email": "customer@example.com",
-        "invoice_number": "INV-2024-001",
-        "invoice_date": "2024-01-15",
-        "due_date": "2024-02-15",
-        "total_amount": "299.99",
-        "company_name": "Example Corp",
-        "payment_link": "https://example.com/pay/inv-2024-001",
-        "payment_terms": "Net 30",
-        "notes": "Thank you for your business!"
-    }
-  }'
-```
-
-### Get Available Email Types
-```bash
-curl -X GET http://localhost:5000/email-types \
-  -H "X-API-Key: your-api-key"
-```
-
-## Request Format
-
-All email requests use the same format:
-
-```json
-{
-    "receiver_email": "recipient@example.com",
-    "email_type": "email_type_key",
-    "sender_name": "Sender Name",
-    "sender_email": "sender@example.com",
-    "variables": {
-        "variable1": "value1",
-        "variable2": "value2"
-    }
-}
-```
-
-**Required Fields:**
-- `receiver_email`: Email address of the recipient
-- `email_type`: Type of email to send
-- `sender_email`: Email address of the sender (required)
-- `sender_name`: Name of the sender (optional, will use email if not provided)
-- `variables`: Template variables specific to the email type
+- **[API Documentation](API_DOCUMENTATION.md)** - Complete API reference with request/response examples
+- **[Custom Templates](CUSTOM_TEMPLATES.md)** - How to create and add custom email templates
+- **[Domain Email Setup](GMAIL_DOMAIN_EMAIL_SETUP.md)** - Complete guide for custom domain emails
+- **[Environment Setup](ENVIRONMENT_SETUP.md)** - Detailed environment configuration and troubleshooting
 
 ## Testing
 
-Run the comprehensive test suite:
-
 ```bash
+# Quick test
+python test_email_short.py
+
+# Comprehensive test
 python test_email.py
 ```
 
-The test script will:
-- Test the single endpoint with all email types
-- Verify API key protection
-- Test error handling and validation
-- Validate email sending functionality
+## License
 
-## Error Handling
-
-The API returns appropriate HTTP status codes and error messages:
-
-- **200 OK:** Successful email sent
-- **400 Bad Request:** Missing required fields or invalid email type
-- **401 Unauthorized:** Missing or invalid API key
-- **500 Internal Server Error:** Email sending failures or server errors
-
-## Security Features
-
-- **API Key Authentication** - All sensitive endpoints require valid API key
-- **Email Type Validation** - Comprehensive validation of email types
-- **Variable Validation** - Required variables are validated for each email type
-- **Environment Variables** - Sensitive data stored securely
-- **Input Validation** - Comprehensive validation of all inputs
-- **Error Handling** - Secure error messages without information leakage
-
-## Production Deployment
-
-For production use:
-
-1. **Change Default Keys** - Update API_KEY in production
-2. **Environment Variables** - Use proper environment management
-3. **HTTPS** - Enable SSL/TLS for all communications
-4. **Rate Limiting** - Implement rate limiting for API endpoints
-5. **Monitoring** - Add logging and monitoring
-6. **Database** - Store API keys in secure database instead of environment
-
-## Troubleshooting
-
-### Common Issues
-
-1. **Authentication Failed:** Check your Gmail App Password
-2. **API Key Required:** Ensure X-API-Key header is included
-3. **Invalid Email Type:** Check the email_type parameter
-4. **Missing Variables:** Ensure all required variables are provided
-5. **Connection Refused:** Verify SMTP settings and firewall rules
-
-### Gmail Setup
-
-1. Enable 2-Factor Authentication in your Google Account
-2. Generate an App Password for "Mail"
-3. Use the App Password in your `.env` file
-4. Ensure "Less secure app access" is disabled (App Passwords are more secure)
-
-## Architecture Benefits
-
-- **Single Endpoint** - Simplified API with one endpoint for all email types
-- **Type Validation** - Comprehensive validation of email types and variables
-- **Maintainability** - Easy to modify and extend functionality
-- **Testability** - Components can be tested in isolation
-- **Scalability** - Modular design allows for easy scaling
-- **Security** - Centralized authentication and validation
-- **Professional** - Production-ready code structure
-
-## Template Structure
-
-The email templates use a clear mapping structure:
-
-```python
-# Email template type keys
-WELCOME_EMAIL_KEY = "welcome_email"
-ACCOUNT_CONFIRMATION_KEY = "account_confirmation_email"
-PASSWORD_RESET_KEY = "password_reset_email"
-ACCESS_KEY_KEY = "access_key_email"
-INVOICE_KEY = "invoice_email"
-
-# Main template mapping
-TEMPLATE_MAP = {
-    WELCOME_EMAIL_KEY: welcome_email,
-    ACCOUNT_CONFIRMATION_KEY: account_confirmation_email,
-    PASSWORD_RESET_KEY: password_reset_email,
-    ACCESS_KEY_KEY: access_key_email,
-    INVOICE_KEY: invoice_email
-}
-
-# Valid email types list
-VALID_EMAIL_TYPES = list(TEMPLATE_MAP.keys())
-```
-
-This structure makes it easy to:
-- Add new email types
-- Validate email type parameters
-- Maintain template consistency
-- Generate documentation automatically
+This project is open source and available under the [MIT License](LICENSE).
