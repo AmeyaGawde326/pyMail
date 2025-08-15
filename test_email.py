@@ -51,6 +51,8 @@ def test_send_welcome_email():
     data = {
         "receiver_email": user_email,
         "email_type": "welcome_email",
+        "sender_name": "Test App",
+        "sender_email": "noreply@example.com",
         "variables": {
             "name": "Test User",
             "email": user_email,
@@ -77,6 +79,8 @@ def test_send_account_confirmation():
     data = {
         "receiver_email": user_email,
         "email_type": "account_confirmation_email",
+        "sender_name": "Test App",
+        "sender_email": "noreply@example.com",
         "variables": {
             "name": "Test User",
             "verification_url": "https://example.com/verify?token=abc123",
@@ -103,6 +107,8 @@ def test_send_password_reset():
     data = {
         "receiver_email": user_email,
         "email_type": "password_reset_email",
+        "sender_name": "Test App",
+        "sender_email": "noreply@example.com",
         "variables": {
             "name": "Test User",
             "reset_link": "https://example.com/reset?token=abc123",
@@ -133,6 +139,8 @@ def test_send_access_key():
     data = {
         "receiver_email": user_email,
         "email_type": "access_key_email",
+        "sender_name": "Test App",
+        "sender_email": "noreply@example.com",
         "variables": {
             "name": "Test User",
             "service_name": "API Service",
@@ -162,6 +170,8 @@ def test_send_invoice():
     data = {
         "receiver_email": user_email,
         "email_type": "invoice_email",
+        "sender_name": "Example Corp",
+        "sender_email": "billing@example.com",
         "variables": {
             "customer_name": "John Doe",
             "customer_email": user_email,
@@ -193,8 +203,10 @@ def test_invalid_email_type():
     """Test sending email with invalid email type"""
     print("Testing invalid email type...")
     data = {
-                "receiver_email": user_email,
+        "receiver_email": user_email,
         "email_type": "invalid_email_type",
+        "sender_name": "Test App",
+        "sender_email": "noreply@example.com",
         "variables": {
             "name": "Test User"
         }

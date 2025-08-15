@@ -12,9 +12,13 @@ def validate_email_request(data):
     receiver_email = data.get('receiver_email')
     email_type = data.get('email_type')
     variables = data.get('variables', {})
+    sender_email = data.get('sender_email')
     
     if not receiver_email:
         errors.append("Receiver email is required")
+    
+    if not sender_email:
+        errors.append("Sender email is required")
     
     if not email_type:
         errors.append("Email type is required")

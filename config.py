@@ -21,9 +21,6 @@ class Config:
         except Exception as e:
             print(f"Warning: Failed to decode MAIL_PASSWORD from base64: {e}")
     
-    MAIL_DEFAULT_SENDER = os.getenv('MAIL_DEFAULT_SENDER')
-
-    
     # API Security
     API_KEY = os.getenv('API_KEY', 'default-api-key-change-in-production')
     

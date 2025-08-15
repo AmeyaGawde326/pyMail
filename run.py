@@ -14,7 +14,6 @@ def check_environment():
     required_vars = [
         'MAIL_USERNAME',
         'MAIL_PASSWORD',
-        'MAIL_DEFAULT_SENDER',
         'API_KEY'
     ]
     

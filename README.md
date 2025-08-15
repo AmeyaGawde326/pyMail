@@ -49,7 +49,7 @@ MAIL_USE_TLS=True
 MAIL_USE_SSL=False
 MAIL_USERNAME=your-email@gmail.com
 MAIL_PASSWORD=base64-encoded-app-password
-MAIL_DEFAULT_SENDER=your-email@gmail.com
+# Note: Sender information is now passed in the request (sender_name and sender_email)
 
 # Flask Configuration
 FLASK_ENV=development
@@ -157,6 +157,8 @@ curl -X POST http://localhost:5000/send-email \
   -d '{
     "receiver_email": "user@example.com",
     "email_type": "welcome_email",
+    "sender_name": "Example App",
+    "sender_email": "noreply@example.com",
     "variables": {
         "name": "Alice Smith",
         "email": "alice@example.com",
@@ -173,6 +175,8 @@ curl -X POST http://localhost:5000/send-email \
   -d '{
     "receiver_email": "user@example.com",
     "email_type": "account_confirmation_email",
+    "sender_name": "Example App",
+    "sender_email": "noreply@example.com",
     "variables": {
         "name": "Bob Johnson",
         "verification_url": "https://example.com/verify?token=abc123",
@@ -189,6 +193,8 @@ curl -X POST http://localhost:5000/send-email \
   -d '{
     "receiver_email": "user@example.com",
     "email_type": "password_reset_email",
+    "sender_name": "Example App",
+    "sender_email": "noreply@example.com",
     "variables": {
         "name": "Carol Davis",
         "reset_link": "https://example.com/reset?token=xyz789",
@@ -205,6 +211,8 @@ curl -X POST http://localhost:5000/send-email \
   -d '{
     "receiver_email": "user@example.com",
     "email_type": "access_key_email",
+    "sender_name": "Example App",
+    "sender_email": "noreply@example.com",
     "variables": {
         "name": "David Wilson",
         "service_name": "API Service",
@@ -224,6 +232,8 @@ curl -X POST http://localhost:5000/send-email \
   -d '{
     "receiver_email": "customer@example.com",
     "email_type": "invoice_email",
+    "sender_name": "Example Corp",
+    "sender_email": "billing@example.com",
     "variables": {
         "customer_name": "John Doe",
         "customer_email": "customer@example.com",
@@ -253,12 +263,21 @@ All email requests use the same format:
 {
     "receiver_email": "recipient@example.com",
     "email_type": "email_type_key",
+    "sender_name": "Sender Name",
+    "sender_email": "sender@example.com",
     "variables": {
         "variable1": "value1",
         "variable2": "value2"
     }
 }
 ```
+
+**Required Fields:**
+- `receiver_email`: Email address of the recipient
+- `email_type`: Type of email to send
+- `sender_email`: Email address of the sender (required)
+- `sender_name`: Name of the sender (optional, will use email if not provided)
+- `variables`: Template variables specific to the email type
 
 ## Testing
 

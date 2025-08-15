@@ -36,9 +36,11 @@ def send_email():
     receiver_email = data.get('receiver_email')
     email_type = data.get('email_type')
     variables = data.get('variables', {})
+    sender_name = data.get('sender_name')
+    sender_email = data.get('sender_email')
     
     # Send email using email service
-    return email_service.send_email(receiver_email, email_type, variables)
+    return email_service.send_email(receiver_email, email_type, variables, sender_name, sender_email)
 
 @app.route('/email-types', methods=['GET'])
 @require_api_key

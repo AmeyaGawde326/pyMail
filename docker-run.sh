@@ -46,8 +46,9 @@ check_env_file() {
         echo ""
         echo "MAIL_USERNAME=your-email@gmail.com"
         echo "MAIL_PASSWORD=base64-encoded-app-password"
-        echo "MAIL_DEFAULT_SENDER=your-email@gmail.com"
         echo "API_KEY=your-api-key-here"
+        echo ""
+        echo "Note: Sender information (sender_name and sender_email) is now passed in the request"
         echo ""
         print_status "You can copy from env_example.txt and update the values"
         exit 1

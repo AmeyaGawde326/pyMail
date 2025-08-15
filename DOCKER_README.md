@@ -21,7 +21,7 @@ cp env_example.txt .env
 # Edit the .env file with your values
 # MAIL_USERNAME=your-email@gmail.com
 # MAIL_PASSWORD=base64-encoded-app-password
-# MAIL_DEFAULT_SENDER=your-email@gmail.com
+# Note: Sender information is now passed in the request (sender_name and sender_email)
 # API_KEY=your-api-key-here
 ```
 
@@ -170,7 +170,6 @@ docker run -d \
   --name python-email-server \
   -e MAIL_USERNAME=your-email@gmail.com \
   -e MAIL_PASSWORD=your-app-password \
-  -e MAIL_DEFAULT_SENDER=your-email@gmail.com \
   -e API_KEY=your-api-key \
   -p 5000:5000 \
   python-email-server
@@ -244,7 +243,7 @@ The following environment variables can be set in your `.env` file or passed dir
 # SMTP Configuration
 MAIL_USERNAME=your-email@gmail.com
 MAIL_PASSWORD=base64-encoded-app-password
-MAIL_DEFAULT_SENDER=your-email@gmail.com
+# Note: Sender information is now passed in the request (sender_name and sender_email)
 
 # Security
 API_KEY=your-api-key-here

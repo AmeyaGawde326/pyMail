@@ -14,7 +14,7 @@ services:
       - MAIL_USE_SSL=False
       - MAIL_USERNAME=${MAIL_USERNAME}
       - MAIL_PASSWORD=${MAIL_PASSWORD}
-      - MAIL_DEFAULT_SENDER=${MAIL_DEFAULT_SENDER}
+      # Note: Sender information is now passed in the request (sender_name and sender_email)
       
       # Flask Configuration
       - FLASK_ENV=production

@@ -6,7 +6,7 @@ MAIL_USE_SSL=False
 MAIL_USERNAME=your-email@gmail.com
 MAIL_PASSWORD=base64-encoded-app-password
 # To encode your password: echo -n "your-actual-password" | base64
-MAIL_DEFAULT_SENDER=your-email@gmail.com
+# Note: Sender information (sender_name and sender_email) is now passed in the request
 
 # Flask Configuration
 FLASK_ENV=development
