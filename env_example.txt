@@ -9,8 +9,17 @@ MAIL_PASSWORD=base64-encoded-app-password
 # Note: Sender information (sender_name and sender_email) is now passed in the request
 
 # Flask Configuration
-FLASK_ENV=development
-FLASK_DEBUG=True
+FLASK_ENV=production
+FLASK_DEBUG=False
 
 # API Security
 API_KEY=your-api-key-here
+
+# Rate Limiting Configuration
+RATE_LIMIT=10
+
+# Redis Configuration for Rate Limiting (Optional)
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_DB=0
+REDIS_PASSWORD=

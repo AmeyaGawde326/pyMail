@@ -15,6 +15,23 @@ All protected endpoints require the `X-API-Key` header with your API key.
 X-API-Key: your-api-key-here
 ```
 
+## Rate Limiting
+The API implements configurable rate limiting to prevent abuse. Rate limits can be configured via environment variables:
+
+- **Rate Limit**: Configurable via `RATE_LIMIT` environment variable (default: 10 requests per second)
+- **Applies to**: All endpoints uniformly
+- **Storage**: Redis (persistent) or in-memory (resets on restart) - automatically detected
+
+**Rate Limit Response (HTTP 429):**
+```json
+{
+  "error": "Rate limit exceeded. Please try again later.",
+  "status": "error"
+}
+```
+
+**Note**: Rate limiting is always enabled and uses requests per second. Redis is automatically detected and used if available, providing persistent rate limiting across server restarts. If Redis is not available, the system automatically falls back to in-memory storage. **For production environments, always use Redis for reliable and persistent rate limiting.**
+
 ## Endpoints
 
 ### 1. Health Check
@@ -28,7 +45,11 @@ No authentication required. Check if the service is running.
   "status": "healthy",
   "service": "Email Server",
   "version": "2.1.0",
-  "email_types_count": 5
+  "email_types_count": 5,
+  "rate_limiting": {
+    "limit": "10 per second",
+    "storage": "redis"
+  }
 }
 ```
 

@@ -11,26 +11,30 @@ A Flask-based web server that provides email sending functionality using Google 
 - **Google SMTP Integration** - Reliable email delivery via Gmail
 - **Multiple Email Types** - Welcome, confirmation, password reset, access key, and invoice emails
 - **Environment Variable Configuration** - Secure credential management
+- **Rate Limiting** - Configurable rate limiting to prevent API abuse
 - **Comprehensive Validation** - Input validation and error handling
 
 ## Project Structure
 
 ```
 python-mail-server/
-├── app.py              # Main Flask application with single endpoint
-├── config.py           # Configuration management
-├── templates.py        # Email templates and type mappings
-├── utils.py            # Utility functions and validation
-├── email_service.py    # Email service business logic
-├── requirements.txt    # Python dependencies
-├── test_email.py       # Comprehensive testing script
-├── test_email_short.py # Quick testing script
-├── run.py              # Enhanced startup script
+├── app.py                    # Main Flask application with Redis rate limiting
+├── config.py                 # Configuration management with Redis support
+├── templates.py              # Email templates and type mappings
+├── utils.py                  # Utility functions and validation
+├── email_service.py          # Email service business logic
+├── requirements.txt          # Python dependencies including Flask-Limiter & Redis
+├── test_email.py             # Comprehensive testing script
+├── test_email_short.py      # Quick testing script
+├── test_rate_limiting.py    # Rate limiting & Redis test script
+├── run.py                    # Enhanced startup script
+├── docker-compose.yml        # Docker setup with Redis service
+├── rate_limit_examples.env  # Example rate limiting configurations
 ├── GMAIL_DOMAIN_EMAIL_SETUP.md # Complete domain email setup guide
-├── API_DOCUMENTATION.md # API endpoints and usage
-├── CUSTOM_TEMPLATES.md # How to add custom email templates
-├── ENVIRONMENT_SETUP.md # Detailed environment configuration guide
-└── README.md           # This file
+├── API_DOCUMENTATION.md      # API endpoints and usage with Redis rate limiting
+├── CUSTOM_TEMPLATES.md       # How to create and add custom email templates
+├── ENVIRONMENT_SETUP.md      # Detailed environment configuration and Redis setup
+└── README.md                 # This file
 ```
 
 ## Quick Start
@@ -71,6 +75,31 @@ API_KEY=your-secure-api-key // This is a random string of password that you can 
 
 **Important:** Use your Gmail account (not domain email) as `MAIL_USERNAME`.
 
+### 2.2 Rate Limiting Configuration
+The server includes configurable rate limiting to prevent abuse. You can control rate limits through environment variables:
+
+```env
+# Rate Limiting Configuration
+RATE_LIMIT=10
+
+# Redis Configuration for Rate Limiting (Optional)
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_DB=0
+REDIS_PASSWORD=
+```
+
+**Rate Limit Options:**
+- `RATE_LIMIT`: Number of requests per second (default: 10)
+
+**Redis Options (Optional):**
+- `REDIS_HOST`: Redis server hostname (default: localhost)
+- `REDIS_PORT`: Redis server port (default: 6379)
+- `REDIS_DB`: Redis database number (default: 0)
+- `REDIS_PASSWORD`: Redis password (optional)
+
+**Note:** All rate limit values are requests per second. Redis is automatically detected and used if available, providing persistent rate limiting across server restarts. If Redis is not available, the system automatically falls back to in-memory storage. **For production environments, always use Redis for reliable and persistent rate limiting.**
+
 For detailed setup instructions and troubleshooting, see **[Environment Setup Guide](ENVIRONMENT_SETUP.md)**.
 
 ### 3. Run the Server
@@ -107,7 +136,13 @@ python test_email_short.py
 
 # Comprehensive test
 python test_email.py
+
+# Rate limiting test
+python test_rate_limiting.py
 ```
+
+### Rate Limiting Testing
+The `test_rate_limiting.py` script tests the rate limiting functionality by making multiple rapid requests to trigger rate limits. This helps verify that your rate limiting configuration is working correctly.
 
 ## License
 

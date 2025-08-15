@@ -7,6 +7,7 @@ This guide provides detailed instructions for setting up your environment variab
 - A Gmail account
 - Access to your project directory
 - Basic command line knowledge
+- Redis (recommended for production, optional for development)
 
 ## Step-by-Step Setup
 
@@ -100,6 +101,15 @@ MAIL_PASSWORD=YWJjZCBmZ2ggaWprbCBtbm9w==
 
 # Your custom API key (change from default)
 API_KEY=your-secure-api-key-here
+
+# Rate Limiting Configuration
+RATE_LIMIT=10
+
+# Redis Configuration for Rate Limiting (Optional)
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_DB=0
+REDIS_PASSWORD=
 ```
 
 **Example completed .env file:**
@@ -107,14 +117,60 @@ API_KEY=your-secure-api-key-here
 MAIL_USERNAME=john.doe@gmail.com
 MAIL_PASSWORD=YWJjZCBmZ2ggaWprbCBtbm9w==
 API_KEY=my-super-secure-api-key-123
+RATE_LIMIT=10
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_DB=0
+REDIS_PASSWORD=
 ```
 
-### Step 6: Verify Configuration
+### Step 6: Redis Setup (Recommended for Production)
+
+Redis provides persistent rate limiting across server restarts. **For production environments, Redis is strongly recommended.**
+
+#### Option A: Local Redis Installation
+
+**Ubuntu/Debian:**
+```bash
+sudo apt update
+sudo apt install redis-server
+sudo systemctl start redis-server
+sudo systemctl enable redis-server
+```
+
+**macOS:**
+```bash
+brew install redis
+brew services start redis
+```
+
+**Windows:**
+Download and install from [Redis for Windows](https://github.com/microsoftarchive/redis/releases)
+
+#### Option B: Docker Redis (Recommended)
+
+```bash
+# Start Redis container
+docker run -d --name redis -p 6379:6379 redis:7-alpine
+
+# Or use docker-compose (includes Redis)
+docker-compose up -d
+```
+
+#### Option C: Cloud Redis Services
+
+- **Redis Cloud**: [redis.com](https://redis.com/)
+- **AWS ElastiCache**: Redis-compatible
+- **Google Cloud Memorystore**: Redis-compatible
+- **Azure Cache for Redis**
+
+### Step 7: Verify Configuration
 
 1. **Check file location**: Ensure `.env` is in your project root directory
 2. **Check file format**: No extra spaces, quotes, or special characters
 3. **Check encoding**: Ensure the file is saved as UTF-8
-4. **Restart server**: Restart your Flask server after making changes
+4. **Test Redis connection** (if configured): Ensure Redis is accessible
+5. **Restart server**: Restart your Flask server after making changes
 
 ## Common Issues and Solutions
 
@@ -200,6 +256,29 @@ API_KEY="my-api-key"
 API_KEY=my-api-key
 ```
 
+### Issue: "Redis connection failed"
+
+**Symptoms:**
+- Redis connection errors in logs
+- Rate limiting falls back to in-memory storage
+
+**Solutions:**
+1. **Check Redis service**: Ensure Redis is running
+2. **Verify connection details**: Check host, port, and password
+3. **Test connection**: Use `redis-cli ping` to test Redis
+4. **Check firewall**: Ensure port 6379 is accessible
+5. **Fallback works**: In-memory storage will be used automatically
+
+**Troubleshooting:**
+```bash
+# Test Redis connection
+redis-cli ping
+# Should return: PONG
+
+# Test with specific host/port
+redis-cli -h localhost -p 6379 ping
+```
+
 ### Issue: "File not found or not loading"
 
 **Symptoms:**
@@ -240,10 +319,22 @@ API_KEY=flask-email-server-2024-secure-key-abc123def456
 # Development
 MAIL_USERNAME=dev@gmail.com
 API_KEY=dev-api-key
+REDIS_HOST=localhost
 
 # Production (use different file or environment)
 MAIL_USERNAME=prod@gmail.com
 API_KEY=prod-api-key
+REDIS_HOST=redis-prod.example.com
+```
+
+### 5. Redis Security (if using Redis)
+```env
+# Use strong Redis passwords
+REDIS_PASSWORD=strong-redis-password-123
+
+# Restrict Redis access
+REDIS_HOST=127.0.0.1  # Only local access
+# Or use Redis ACLs for more granular control
 ```
 
 ## Testing Your Configuration
@@ -264,6 +355,12 @@ python test_email_short.py
 ```bash
 # Test configuration loading
 python -c "from config import Config; print('Config loaded successfully')"
+```
+
+### 4. Redis Test (if configured)
+```bash
+# Test Redis connection
+python -c "from config import Config; print('Redis host:', Config.REDIS_HOST)"
 ```
 
 ## Advanced Configuration
@@ -289,6 +386,40 @@ cp .env .env.production
 export ENV_FILE=.env.production
 ```
 
+### Redis Cluster Configuration
+```env
+# For Redis Cluster or Sentinel
+REDIS_HOST=redis-cluster.example.com
+REDIS_PORT=7000
+REDIS_DB=0
+REDIS_PASSWORD=cluster-password
+```
+
+## Production Recommendations
+
+### 1. Always Use Redis
+- **Redis is strongly recommended for production**
+- Provides persistent rate limiting across server restarts
+- Handles high-traffic scenarios better
+- More reliable than in-memory storage
+
+### 2. Production Environment Variables
+```env
+FLASK_ENV=production
+FLASK_DEBUG=False
+REDIS_HOST=redis-prod.example.com
+REDIS_PASSWORD=strong-production-password
+```
+
+### 3. Docker Production Setup
+```bash
+# Use docker-compose for production
+docker-compose -f docker-compose.yml up -d
+
+# Or deploy with Redis separately
+docker run -d --name redis-prod -p 6379:6379 redis:7-alpine
+```
+
 ## Troubleshooting Checklist
 
 - [ ] 2-Factor Authentication enabled
@@ -301,6 +432,9 @@ export ENV_FILE=.env.production
 - [ ] Flask server restarted after changes
 - [ ] Gmail account (not domain email) used as MAIL_USERNAME
 - [ ] API key matches between .env and requests
+- [ ] Redis service running (if configured)
+- [ ] Redis connection details correct
+- [ ] Rate limiting configuration set
 
 ## Getting Help
 
@@ -311,6 +445,8 @@ If you're still experiencing issues:
 3. **Test with simple values**: Use basic passwords/keys first
 4. **Check Gmail status**: Ensure Gmail services are working
 5. **Review security settings**: Verify Google Account security configuration
+6. **Test Redis separately**: Verify Redis connection independently
+7. **Check fallback behavior**: In-memory storage should work if Redis fails
 
 ## Resources
 
@@ -318,3 +454,6 @@ If you're still experiencing issues:
 - [Gmail SMTP Settings](https://support.google.com/mail/answer/7126229)
 - [Base64 Encoding Tools](https://www.base64encode.org/)
 - [Environment Variables Best Practices](https://12factor.net/config)
+- [Redis Documentation](https://redis.io/documentation)
+- [Redis Installation Guide](https://redis.io/download)
+- [Docker Redis](https://hub.docker.com/_/redis)

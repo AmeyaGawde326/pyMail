@@ -24,6 +24,15 @@ class Config:
     # API Security
     API_KEY = os.getenv('API_KEY', 'default-api-key-change-in-production')
     
+    # Rate Limiting Configuration
+    RATE_LIMIT = int(os.getenv('RATE_LIMIT', '10'))  # requests per second
+    
+    # Redis Configuration for Rate Limiting
+    REDIS_HOST = os.getenv('REDIS_HOST', 'localhost')
+    REDIS_PORT = int(os.getenv('REDIS_PORT', '6379'))
+    REDIS_DB = int(os.getenv('REDIS_DB', '0'))
+    REDIS_PASSWORD = os.getenv('REDIS_PASSWORD', None)
+    
     # Email Configuration
     EMAIL_VERIFICATION_EXPIRY_HOURS = 1
     PASSWORD_RESET_EXPIRY_HOURS = 24
