@@ -2,15 +2,16 @@ services:
   redis:
     image: redis:7-alpine
     container_name: email-server-redis
+    command: redis-server --port 6399
     ports:
-      - "6379:6379"
+      - "6399:6399"
     volumes:
       - redis_data:/data
     restart: unless-stopped
     networks:
       - email-network
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD", "redis-cli", "-p", "6399", "ping"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -40,7 +41,7 @@ services:
       
       # Rate Limiting with Redis
       - REDIS_HOST=redis
-      - REDIS_PORT=6379
+      - REDIS_PORT=6399
       - REDIS_DB=0
       - RATE_LIMIT=${RATE_LIMIT:-10}
     env_file:
