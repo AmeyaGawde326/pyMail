@@ -12,6 +12,22 @@ A robust, production-ready email server built with Flask that supports multiple 
 - **Health Monitoring**: Built-in health check endpoint
 - **Template Variables**: Dynamic email content with variable substitution
 
+## ⚠️ Important Notice: Email Delivery
+
+**Emails sent through this server may be delivered to recipients' spam/junk folders.** This is a common issue with automated email services, especially when:
+
+- Sending from a new domain or IP address
+- Using Gmail SMTP for bulk sending
+- Recipients haven't previously engaged with your emails
+- Email content triggers spam filters
+
+**Recommendations:**
+- Inform your recipients to check their spam/junk folders
+- Ask them to mark your emails as "Not Spam" and add your sender address to their contacts
+- Consider implementing email authentication (SPF, DKIM, DMARC) for better deliverability
+- Monitor your sender reputation and bounce rates
+- Start with small email volumes and gradually increase to build trust
+
 ## 📁 Project Structure
 
 ```
